@@ -62,6 +62,7 @@
   class PleaseWait
     @_defaultOptions:
       backgroundColor: null
+      container: document.body
       logo: null
       loadingHtml: null
       template: """
@@ -112,9 +113,9 @@
       @_logoElem = @_loadingElem.getElementsByClassName("pg-loading-logo")[0]
       @_logoElem.src = @options.logo if @_logoElem?
       # Add the loading screen to the body
-      removeClass("pg-loaded", document.body)
-      addClass("pg-loading", document.body)
-      document.body.appendChild(@_loadingElem)
+      removeClass("pg-loaded", @options.container)
+      addClass("pg-loading", @options.container)
+      @options.container.appendChild(@_loadingElem)
       # Add the CSS class that will trigger the initial transitions of the logo/loading HTML
       addClass("pg-loading", @_loadingElem)
       # Register a callback to invoke when the loading screen is finished
@@ -233,15 +234,15 @@
       # We do this here so that the user can display their HTML behind PleaseWait before it is
       # fully transitioned out. Otherwise, the HTML flashes oddly, since there's a brief moment
       # of time where there is no loading screen and no HTML
-      addClass("pg-loaded", document.body)
+      addClass("pg-loaded", @options.container)
       if typeof @_onLoadedCallback == "function" then @_onLoadedCallback.apply(this)
 
       # Again, define a listener to run once the loading screen has fully transitioned out
       listener = =>
         # Remove the loading screen from the body
-        document.body.removeChild(@_loadingElem)
+        @options.container.removeChild(@_loadingElem)
         # Remove the pg-loading class since we're done here
-        removeClass("pg-loading", document.body)
+        removeClass("pg-loading", @options.container)
         if animationSupport then @_loadingElem.removeEventListener(animationEvent, listener)
         # Reset the loading screen element since it's no longer attached to the DOM
         @_loadingElem = null

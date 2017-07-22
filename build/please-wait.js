@@ -3,11 +3,11 @@
 * Display a nice loading screen while your app loads
 
 * @author Pathgather <tech@pathgather.com>
-* @copyright Pathgather 2015
+* @copyright Pathgather 2017
 * @license MIT <http://opensource.org/licenses/mit-license.php>
 * @link https://github.com/Pathgather/please-wait
 * @module please-wait
-* @version 0.0.5
+* @version 0.0.6
 */
 (function(root, factory) {
   if (typeof exports === "object") {
@@ -82,6 +82,7 @@
   PleaseWait = (function() {
     PleaseWait._defaultOptions = {
       backgroundColor: null,
+      container: document.body,
       logo: null,
       loadingHtml: null,
       template: "<div class='pg-loading-inner'>\n  <div class='pg-loading-center-outer'>\n    <div class='pg-loading-center-middle'>\n      <h1 class='pg-loading-logo-header'>\n        <img class='pg-loading-logo'></img>\n      </h1>\n      <div class='pg-loading-html'>\n      </div>\n    </div>\n  </div>\n</div>",
@@ -114,9 +115,9 @@
       if (this._logoElem != null) {
         this._logoElem.src = this.options.logo;
       }
-      removeClass("pg-loaded", document.body);
-      addClass("pg-loading", document.body);
-      document.body.appendChild(this._loadingElem);
+      removeClass("pg-loaded", this.options.container);
+      addClass("pg-loading", this.options.container);
+      this.options.container.appendChild(this._loadingElem);
       addClass("pg-loading", this._loadingElem);
       this._onLoadedCallback = this.options.onLoadedCallback;
       listener = (function(_this) {
@@ -256,14 +257,14 @@
       if (this._loadingElem == null) {
         return;
       }
-      addClass("pg-loaded", document.body);
+      addClass("pg-loaded", this.options.container);
       if (typeof this._onLoadedCallback === "function") {
         this._onLoadedCallback.apply(this);
       }
       listener = (function(_this) {
         return function() {
-          document.body.removeChild(_this._loadingElem);
-          removeClass("pg-loading", document.body);
+          _this.options.container.removeChild(_this._loadingElem);
+          removeClass("pg-loading", _this.options.container);
           if (animationSupport) {
             _this._loadingElem.removeEventListener(animationEvent, listener);
           }
