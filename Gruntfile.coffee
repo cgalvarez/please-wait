@@ -4,16 +4,23 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
-  grunt.loadNpmTasks 'grunt-contrib-compass'
+  grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
+  grunt.loadNpmTasks 'grunt-contrib-cssmin'
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
-    compass:
+    sass:
       dist:
         options:
-          sassDir: 'src',
-          cssDir: 'build'
+          sourcemap: 'none'
+          style: 'expanded'
+        files: [
+          cwd: 'src',
+          src: ['**/*.scss'],
+          dest: '../build',
+          ext: '.css',
+        ]
     meta:
       banner: """
         /**
@@ -68,6 +75,17 @@ module.exports = (grunt) ->
       dist:
         src: ['build/please-wait.js']
         dest: 'build/please-wait.min.js'
+    cssmin:
+      options:
+        sourceMap: false
+      target:
+        files: [
+          expand: true,
+          cwd: 'build',
+          src: ['*.css', '!*.min.css'],
+          dest: 'build',
+          ext: '.min.css'
+        ]
     jasmine:
       please_wait:
         src: 'compile/**/*.js'
@@ -75,7 +93,7 @@ module.exports = (grunt) ->
           specs: 'compile/spec/*.spec.js',
           helpers: 'compile/spec/*.helper.js'
 
-  grunt.registerTask 'default', ['coffeelint', 'clean', 'compass', 'coffee', 'concat', 'uglify']
+  grunt.registerTask 'default', ['coffeelint', 'clean', 'sass', 'coffee', 'concat', 'uglify', 'cssmin']
   grunt.registerTask 'test', [
     'coffeelint',
     'clean:test',

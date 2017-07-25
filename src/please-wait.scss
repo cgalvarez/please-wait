@@ -1,3 +1,4 @@
+// Mixins.
 @mixin prefixed($property, $value, $second:false) {
   @if $second {
     -webkit-#{$property}: $value, $second;
@@ -13,7 +14,21 @@
             #{$property}: $value;
   }
 }
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} { @content; }
+  @-moz-keyframes #{$name} { @content; }
+  @-ms-keyframes #{$name} { @content; }
+  @-o-keyframes #{$name} { @content }
+  @keyframes #{$name} { @content; }
+}
 
+// Animations.
+$ellipsis-width: 1.25em;
+@include keyframes(ellipsis) { to { width: $ellipsis-width; } }
+@include keyframes(pgAnimLoaded) { from { opacity: 1; } }
+@include keyframes(pgAnimLoading) { from { opacity: 0; } }
+
+// Styles.
 body.pg-loading {
   overflow: hidden;
 }
@@ -45,6 +60,23 @@ body.pg-loading {
 
     .pg-loading-html:not(.pg-loaded) {
       @include prefixed(animation-delay, 0.3s);
+    }
+
+    .pg-loading-message {
+      display: inline-block;
+      margin: 0 $ellipsis-width/2 0 0;
+      position: relative;
+
+      &.ellipsis:after {
+        content: "\2026"; /* ascii code for the ellipsis character */
+        display: inline-block;
+        overflow: hidden;
+        position: absolute;
+        left: 100%;
+        vertical-align: bottom;
+        width: 0px;
+        @include prefixed(animation, ellipsis steps(4,end) 900ms infinite);
+      }
     }
   }
 
@@ -89,7 +121,8 @@ body.pg-loading {
   }
 
   .pg-loading-html {
-    margin-top: 90px;
+    .spinner-before { margin-top: 90px;}
+    .spinner-after { margin-bottom: 90px; }
 
     &.pg-loaded {
       @include prefixed(transition, opacity 0.5s cubic-bezier(0.7,0,0.3,1));
@@ -102,57 +135,5 @@ body.pg-loading {
         opacity: 1;
       }
     }
-  }
-}
-
-@-webkit-keyframes pgAnimLoading {
-  from {
-    opacity: 0;
-  }
-}
-@-moz-keyframes pgAnimLoading {
-  from {
-    opacity: 0;
-  }
-}
-@-o-keyframes pgAnimLoading {
-  from {
-    opacity: 0;
-  }
-}
-@-ms-keyframes pgAnimLoading {
-  from {
-    opacity: 0;
-  }
-}
-@keyframes pgAnimLoading {
-  from {
-    opacity: 0;
-  }
-}
-
-@-webkit-keyframes pgAnimLoaded {
-  from {
-    opacity: 1;
-  }
-}
-@-moz-keyframes pgAnimLoaded {
-  from {
-    opacity: 1;
-  }
-}
-@-o-keyframes pgAnimLoaded {
-  from {
-    opacity: 1;
-  }
-}
-@-ms-keyframes pgAnimLoaded {
-  from {
-    opacity: 1;
-  }
-}
-@keyframes pgAnimLoaded {
-  from {
-    opacity: 1;
   }
 }
